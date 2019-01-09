@@ -1,0 +1,73 @@
+Sub Try(ByVal Target As Range)
+  Dim strSearch As String
+  Dim rFND As Range
+  Dim lFND As Integer
+  Dim tgtRange As Range
+  Dim SHT As Worksheet
+  Dim RowCrnt As Long
+    
+  Application.EnableEvents = True
+   Set SHT = Worksheets("Assess")
+   strSearch = SHT.Range("M" & Target.Row).Value
+  lFND = Target.Row
+    Set SHT = Worksheets("Finance")
+    
+  'If strSearch = "SS" Then
+   'Exit Sub
+  'Else
+  
+   With SHT.Range("L:L")
+     Set rFND = .Find(what:=strSearch, After:=Range("L" & Target.Row), LookIn:=xlValues, LookAt:=xlWhole, SearchOrder:=xlByRows, _
+     SearchDirection:=xlPrevious, MatchCase:=False)
+  
+    If rFND.Row = lFND Then
+     Tpid Target
+     
+    Else
+     RowCrnt = rFND.Row
+   
+     'SHT.Range("B" & rFND.Row).Value = RowCrnt
+      SHT.Range("S" & lFND).Value = SHT.Range("U" & RowCrnt).Value
+      SHT.Range("P" & lFND).Value = SHT.Range("P" & RowCrnt).Value
+  
+    End If
+   End With
+  ‘End If
+End Sub
+
+Private Sub Worksheet_Change(ByVal Target As Range)
+ 'Dim sErrMsg As String
+ 'Dim selectedVal As Variant, selectednum As Variant
+  
+ If Target.Column <> 13 Then GoTo ExitProc
+ 'If column A is changed
+ 'If Target.CountLarge = 1 Then
+ 'Try Target
+   'GoTo ExitProc
+ 'End If
+ Try Target
+ExitProc:
+ On Error Resume Next
+ Application.EnableEvents = True
+ If Len(sErrMsg) Then MsgBox sErrMsg
+ Exit Sub
+End Sub
+
+Sub Tpid(ByVal lFND As Range)
+Dim SHT As Worksheet
+Dim tpSearch As String
+Dim tpFND As Range
+Set SHT = Worksheets("Finance")
+tpSearch = SHT.Range("F" & lFND.Row).Value
+With SHT.Range("F:F")
+Set tpFND = .Find(what:=tpSearch, After:=Range("F" & lFND.Row), LookIn:=xlValues, LookAt:=xlWhole, SearchOrder:=xlByRows, _
+  SearchDirection:=xlPrevious, MatchCase:=False)
+ If tpFND.Row <> lFND.Row Then
+    SHT.Range("S" & lFND.Row).Value = SHT.Range("U" & tpFND.Row).Value
+ 'Else
+  '  SHT.Range("Q" & lFND.Row).Value = SHT.Range("R" & lFND.Row).Value
+ End If
+End With
+  
+End Sub
+
